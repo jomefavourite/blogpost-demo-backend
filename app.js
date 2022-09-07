@@ -1,6 +1,9 @@
+"use strict";
 const express = require("express");
 const bodyParser = require("body-parser");
 const Airtable = require("airtable");
+const path = require("path");
+const serverless = require("serverless-http");
 require("dotenv").config();
 
 Airtable.configure({
@@ -11,26 +14,25 @@ Airtable.configure({
 const app = express();
 const base = Airtable.base("app85TLAmh2QmZ9Ml");
 
+router.get("/another", (req, res) => res.json({ route: req.originalUrl }));
+router.post("/", (req, res) => res.json({ postBody: req.body }));
+
+// app.use(bodyParser.json());
+
+module.exports = app;
+module.exports.handler = serverless(app);
+
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
-
-// mongoose.connect("mongodb://localhost:27017/blogApi", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
-
-// const blogSchema = {
-//   title: String,
-//   content: String,
-// };
-
-// const Blog = mongoose.model("Blog", blogSchema);
+app.use("/.netlify/functions/server", router); // path must route to lambda
 
 app.get("/", function (req, res) {
-  res.send("Hello World!");
+  res.writeHead(200, { "Content-Type": "text/html" });
+  res.write("<h1>Hello from Express.js!</h1>");
+  res.end();
 });
 
 app.get("/blogs", (req, res) => {
@@ -133,3 +135,6 @@ app.delete("/blogs", (req, res) => {
 app.listen(3001, () => {
   console.log("listening on http://localhost:3001");
 });
+
+module.exports = app;
+module.exports.handler = serverless(app);
