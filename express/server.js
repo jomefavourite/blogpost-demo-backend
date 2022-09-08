@@ -14,6 +14,8 @@ Airtable.configure({
 const app = express();
 const base = Airtable.base("app85TLAmh2QmZ9Ml");
 
+const router = express.Router();
+
 // router.get("/another", (req, res) => res.json({ route: req.originalUrl }));
 // router.post("/", (req, res) => res.json({ postBody: req.body }));
 
@@ -24,9 +26,14 @@ app.use(
     extended: true,
   })
 );
-app.use("/.netlify/functions/server", router); // path must route to lambda
 
-router.get("/", function (req, res) {
+// middleware that is specific to this router
+router.use((req, res, next) => {
+  console.log("Time: ", Date.now());
+  next();
+});
+
+router.get("/", (req, res) => {
   res.writeHead(200, { "Content-Type": "text/html" });
   res.write("<h1>Hello from Express.js!</h1>");
   res.end();
@@ -129,9 +136,11 @@ router.delete("/blogs", (req, res) => {
   // });
 });
 
-app.listen(3001, () => {
-  console.log("listening on http://localhost:3001");
-});
+app.use("/.netlify/functions/server", router); // path must route to lambda
+
+// app.listen(3001, () => {
+//   console.log("listening on http://localhost:3001");
+// });
 
 module.exports = app;
 module.exports.handler = serverless(app);

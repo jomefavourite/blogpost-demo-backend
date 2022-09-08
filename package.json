@@ -4,8 +4,8 @@
   "description": "",
   "main": "functions/server.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon --watch src app.js",
+    "start": "node server-local.js",
+    "dev": "nodemon server-local.js",
     "build": "netlify-lambda build express"
   },
   "dependencies": {
