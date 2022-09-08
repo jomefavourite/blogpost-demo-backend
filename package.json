@@ -2,7 +2,7 @@
   "name": "blog_test",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "functions/server.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon --watch src app.js",
